@@ -6,15 +6,10 @@ import { RootStackParamList } from '../App';
 
 type NavigationProps = NativeStackScreenProps<RootStackParamList,'Main'>
 
-// if you want children prop
-// type HeaderProps = NavigationProps & React.PropsWithChildren<{
-//   title:string
-// }>
-
-export default function Transactions({navigation}:NavigationProps) {
+export default function Goals({navigation}:NavigationProps) {
   return (
     <View>
-      <Header title='Overview' navigation={navigation}/>
+        <Header title='Goals' navigation={navigation}/>
     </View>
   )
 }
