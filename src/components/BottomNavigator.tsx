@@ -8,6 +8,7 @@ import Transactions from '../screens/Transactions';
 import Account from '../screens/Account';
 import Budgets from '../screens/Budgets';
 import Goals from '../screens/Goals';
+import AddTransaction from '../screens/AddTransaction';
 
 
 export type RootStackParamList = {
@@ -16,6 +17,7 @@ export type RootStackParamList = {
     Budgets:undefined,
     Account:undefined,
     Goals:undefined
+    AddTransaction:undefined
   };
   
   const Tab = createBottomTabNavigator<RootStackParamList>()
@@ -56,9 +58,25 @@ export default function MyTabs() {
             },
           })}
           />
+        <Tab.Screen name="AddTransaction" component={AddTransaction} options={{
+            tabBarLabel:'',
+            headerShown:false,
+            tabBarIcon: () => (
+              activeTab == "AddTransaction" ? <Image source={require('../assets/add_active.png')} style={styles.iconStyles}/>
+              :<Image source={require('../assets/add.png')} style={styles.iconStyles}/>
+            )
+          }} 
+          listeners={() => ({
+            tabPress: e => {
+              //e.preventDefault()
+              setActiveTab("AddTransaction")
+            },
+          })}
+          />
         <Tab.Screen name="Budgets" component={Budgets} options={{
             tabBarLabel:'',
             headerShown:false,
+
             tabBarIcon: () => (
               activeTab == "Budgets" ? <Image source={require('../assets/wallet_active.png')} style={styles.iconStyles}/>
               :<Image source={require('../assets/wallet.png')} style={styles.iconStyles}/>
@@ -71,21 +89,6 @@ export default function MyTabs() {
             },
           })}
           />
-        {/* <Tab.Screen name="Account" component={Account} options={{
-            tabBarLabel:'',
-            headerShown:false,
-            tabBarIcon: () => (
-              activeTab == "Account" ? <Image source={require('../assets/account_active.png')} style={styles.iconStyles}/>
-              :<Image source={require('../assets/account.png')} style={styles.iconStyles}/>
-            ),
-          }}
-          listeners={() => ({
-            tabPress: e => {
-              //e.preventDefault()
-              setActiveTab("Account")
-            },
-          })}
-          /> */}
           <Tab.Screen name="Goals" component={Goals} options={{
             tabBarLabel:'',
             headerShown:false,
@@ -107,8 +110,8 @@ export default function MyTabs() {
 
 const styles = StyleSheet.create({
     iconStyles:{
-      width:25,
-      height:30,
+      width:32,
+      height:32,
       marginTop:10
     },
     iconColor:{

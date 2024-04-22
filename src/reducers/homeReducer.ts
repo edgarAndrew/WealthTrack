@@ -7,7 +7,10 @@ export interface HomeState {
   backAccountId:number,
   backAccounts:BankAccount[],
   transactionType:string,
-  date:string
+  date:string,
+  range:string,
+  transactions:Transaction[],
+  pagination:PaginationResponse
 }
 
 const initialState: HomeState = {
@@ -16,7 +19,37 @@ const initialState: HomeState = {
     error:'',
     backAccounts:[],
     transactionType:"INCOME",
-    date:""
+    date:"",
+    range:"month",
+    transactions:[],
+    pagination:{
+      content: [],
+      empty: true,
+      first: true,
+      last: false,
+      number: 0,
+      numberOfElements: 0,
+      pageable: {
+        offset: 0,
+        pageNumber: 0,
+        pageSize: 0,
+        paged: false,
+        sort: {
+          empty: true,
+          sorted: false,
+          unsorted: true,
+        },
+        unpaged: false,
+      },
+      size: 0,
+      sort: {
+        empty: true,
+        sorted: false,
+        unsorted: true,
+      },
+      totalElements: 0,
+      totalPages: 0
+    }
 }
 
 export const homeSlice = createSlice({
@@ -44,13 +77,47 @@ export const homeSlice = createSlice({
     },
     setDate:(state,action:PayloadAction<string>) =>{
       state.date = action.payload
-    }
+    },
+    setRange:(state,action:PayloadAction<string>) =>{
+      state.range = action.payload
+    },
+
+
+    getTransactionsRequest: (state) => {
+      state.isLoading = true,
+      state.error = ''
+    },
+    getTransactionsSuccess: (state,action: PayloadAction<Transaction[]>) => {
+        state.isLoading = false,
+        state.transactions = action.payload,
+        state.error = ''
+    },
+    getTransactionsFailure: (state,action: PayloadAction<string>) => {
+        state.isLoading = false,
+        state.error = action.payload
+    },
+
+    getPaginationRequest: (state) => {
+      state.isLoading = true,
+      state.error = ''
+    },
+    getPaginationSuccess: (state,action: PayloadAction<PaginationResponse>) => {
+        state.isLoading = false,
+        state.pagination = action.payload,
+        state.error = ''
+    },
+    getPaginationFailure: (state,action: PayloadAction<string>) => {
+        state.isLoading = false,
+        state.error = action.payload
+    },
     
   },
 })
 
 // Action creators are generated for each case reducer function
 export const { getBankAccountsRequest,getBankAccountsSuccess,getBankAccountsFailure,
-    setBankAccountId,setTransactionType,setDate } = homeSlice.actions
+    setBankAccountId,setTransactionType,setDate,
+  getTransactionsRequest,getTransactionsSuccess,getTransactionsFailure,
+  setRange,getPaginationRequest,getPaginationSuccess,getPaginationFailure } = homeSlice.actions
 
 export default homeSlice.reducer

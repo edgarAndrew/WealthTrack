@@ -38,9 +38,9 @@ export default function Header(props:HeaderProps) {
                 <FontAwesomeIcon icon={faEllipsisVertical} size={25} style={styles.icon}/>
             </TouchableOpacity>
           }>
-          <Menu.Item onPress={handleLogout} title="Logout" />
+          <Menu.Item leadingIcon='logout' onPress={handleLogout} title="Logout" />
           <Divider />
-          <Menu.Item onPress={() => {
+          <Menu.Item leadingIcon='account-edit' onPress={() => {
             setVisible(false)
             props.navigation.navigate("Account")
           }} title="Settings" />

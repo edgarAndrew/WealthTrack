@@ -3,6 +3,9 @@ import { Text,SegmentedButtons } from 'react-native-paper'
 import React from 'react'
 import { PieChart } from 'react-native-chart-kit';
 import DateSelector from './DateSelector';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { categoryColors } from '../helpers/util';
 
 
 const data = [
@@ -62,8 +65,17 @@ const chartConfig = {
 }
 
 export default function HomePieChart() {
-    const [value,setValue] = React.useState('year')
-    const [selected, setSelected] = React.useState('');
+  const {transactions} = useSelector((state: RootState) => state.home)
+
+  const data = transactions.map((ele)=>{
+    return {
+      ...ele,
+      name:ele.categoryName,
+      color: categoryColors[ele.categoryName],
+      // legendFontColor: categoryColors[ele.categoryName],
+      // legendFontSize: 15
+    }
+  })
 
     return (
     <View>
@@ -73,7 +85,7 @@ export default function HomePieChart() {
         width={screenWidth}
         height={220}
         chartConfig={chartConfig}
-        accessor={"population"}
+        accessor={"amount"}
         backgroundColor={"transparent"}
         paddingLeft={"65"}
         center={[20, 10]}

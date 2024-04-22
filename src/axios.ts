@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const developmentURL = "http://192.168.0.200:8080/api/v1"
+const developmentURL = "http://172.17.16.1:8080/api/v1"
 const productionURL = "https://personal-finance-tracker-api-ryfl.onrender.com/api/v1"
 
 axios.defaults.baseURL = developmentURL;
