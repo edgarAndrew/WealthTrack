@@ -2,12 +2,18 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './reducers/authReducer'
 import homeReducer from './reducers/homeReducer'
 import transactionReducer from './reducers/transactionReducer'
+import budgetReducer from './reducers/budgetReducer'
+import goalReducer from './reducers/goalReducer'
+import bankReducer from './reducers/bankReducer'
 
 export const store = configureStore({
   reducer: {
     auth:authReducer,
     home:homeReducer,
-    transaction:transactionReducer
+    transaction:transactionReducer,
+    budgets:budgetReducer,
+    goals:goalReducer,
+    bank:bankReducer
   },
 })
 

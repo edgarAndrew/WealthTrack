@@ -43,7 +43,7 @@ export default function MyTabs() {
               setActiveTab("Home")
             },
           })}/>
-        <Tab.Screen name="Transactions" component={Transactions} options={{
+        {/* <Tab.Screen name="Transactions" component={Transactions} options={{
             tabBarLabel:'',
             headerShown:false,
             tabBarIcon: () => (
@@ -57,7 +57,7 @@ export default function MyTabs() {
               setActiveTab("Transactions")
             },
           })}
-          />
+          /> */}
         <Tab.Screen name="AddTransaction" component={AddTransaction} options={{
             tabBarLabel:'',
             headerShown:false,
@@ -93,8 +93,8 @@ export default function MyTabs() {
             tabBarLabel:'',
             headerShown:false,
             tabBarIcon: () => (
-              activeTab == "Account" ? <Image source={require('../assets/account_active.png')} style={styles.iconStyles}/>
-              :<Image source={require('../assets/account.png')} style={styles.iconStyles}/>
+              activeTab == "Account" ? <Image source={require('../assets/transactions_active.png')} style={styles.iconStyles}/>
+              :<Image source={require('../assets/transactions.png')} style={styles.iconStyles}/>
             ),
           }}
           listeners={() => ({

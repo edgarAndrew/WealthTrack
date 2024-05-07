@@ -13,8 +13,8 @@ export const addTransaction: addTransactionHandler = async(dispatch,bankAccountI
     }
     catch(error){
       if(isAxiosError(error)){
-        console.log(error)
-        dispatch(addTransactionFailure("Something went wrong"))
+        console.log(error.response?.data)
+        dispatch(addTransactionFailure(error.response?.data.message))
       }
     }
   };

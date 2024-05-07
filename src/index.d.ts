@@ -8,7 +8,26 @@ interface Transaction {
     categoryName:string,
     percentage:number,
     amount:number,
-    type:string
+    type:string,
+    account:string
+}
+
+interface Budget {
+  id:number,
+  name:string,
+  start_amount:number,
+  current_amount:number,
+  start_date:string,
+  end_date:string
+}
+
+interface Goal{
+  id:number,
+  name:string,
+  targetAmount:number,
+  currentAmount:number,
+  startDate:string,
+  endDate:string
 }
 
 interface PaginationResponse {
@@ -46,5 +65,6 @@ interface PaginationResponse {
     date: string;
     id: number;
     type: string;
+    account:number;
   }
 

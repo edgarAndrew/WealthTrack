@@ -56,13 +56,19 @@ export const authSlice = createSlice({
       state.isLoading = false,
       state.isAuthenticated = true
     },
-    loadUserFailure: (state) => {
+    loadUserFailure: (state,action: PayloadAction<string>) => {
       state.isLoading = false
+      state.error = action.payload
     },
 
     logout: (state) => {
       state.isAuthenticated = false
     },
+
+    clearError: (state) => {
+      state.error = ""
+    },
+    
 
   },
 })
@@ -70,6 +76,6 @@ export const authSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const { loginRequest,loginSuccess,loginFailure,
   loadUserRequest,loadUserSuccess,registerRequest,
-  registerSuccess,registerFailure,loadUserFailure,logout } = authSlice.actions
+  registerSuccess,registerFailure,loadUserFailure,logout,clearError } = authSlice.actions
 
 export default authSlice.reducer

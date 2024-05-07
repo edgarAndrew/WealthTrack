@@ -6,6 +6,7 @@ import { RootState } from '../store';
 // screens
 import Login from '../screens/Login';
 import Register from '../screens/Register';
+import AddTransaction from '../screens/AddTransaction';
 
 // bottomTabs
 import MyTabs from './BottomNavigator';

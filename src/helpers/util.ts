@@ -8,29 +8,29 @@ type CategoryColors = {
 };
 
 export const categoryColors:CategoryColors = {
-    "FOOD": "#FF5733",
-    "EDUCATION": "#33FFB7",
-    "SALARY": "#337AFF",
+    "FOOD": "#E1AA96",
+    "EDUCATION": "#06CAD3",
+    "SALARY": "#997AFF",
     "SPORT": "#FF33E6",
-    "TRIPS": "#33FFCE",
+    "TRIPS": "#F86A80",
     "PETS": "#FF8C33",
     "HOME": "#FFB333",
-    "GROCERIES": "#33FF6B",
+    "GROCERIES": "#060270",
     "CHARITY": "#D133FF",
-    "BONUS": "#33FF96",
-    "CLOTHES": "#FF3366",
+    "BONUS": "#22FF96",
+    "CLOTHES": "#832706",
     "VEHICLE": "#3366FF",
     "DRINKS": "#FF33B3",
-    "ELECTRONICS": "#33FF33",
+    "ELECTRONICS": "#7DDA58",
     "KIDS": "#FF3333",
     "HEALTH": "#33A3FF",
-    "GIFT": "#33FF33",
+    "GIFT": "#118833",
     "GAMES": "#FF9F33",
     "CINEMA": "#FFB333",
-    "HOBBY": "#33FF33",
-    "BEAUTY": "#33FF33",
+    "HOBBY": "#A326B6",
+    "BEAUTY": "#CCFF33",
     "TAXES": "#FFB333",
-    "INVESTMENT": "#33FF33"
+    "INVESTMENT": "#ABFF33"
 };
 
 export function getCategoryOptions() {
@@ -40,4 +40,22 @@ export function getCategoryOptions() {
       options.push({ value, label, color });
     }
     return options;
+}
+
+export function convertDateFormat(inputDateString:string) {
+    const parts = inputDateString.split("/");
+    let year = parts[2];
+    let month = parts[0];
+    let day = parts[1];
+
+    // Adding leading zero if necessary
+    if (month.length === 1) {
+        month = "0" + month;
+    }
+
+    if (day.length === 1) {
+        day = "0" + day;
+    }
+
+    return `${year}-${month}-${day}`;
 }

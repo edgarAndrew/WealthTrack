@@ -1,14 +1,12 @@
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import React from 'react'
 import Header from '../components/Header';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import { useDispatch,useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { Text } from 'react-native-paper';
-import { getBankAccounts,getCategoryTransactions,getAllTransactions } from '../actions/home';
-import Loader from '../components/Loader';
-import { setDate } from '../reducers/homeReducer';
+import { getBankAccounts} from '../actions/bank';
+import { setDate,setTransactionType } from '../reducers/homeReducer';
 
 // components
 import BankSelector from '../components/BankSelector';
@@ -20,33 +18,34 @@ type HomeProps = NativeStackScreenProps<RootStackParamList,'Main'>
 
 export default function Home({navigation}:HomeProps) {
   const dispatch = useDispatch()
-  const {isLoading,error,date:reduxDate,transactionType,range} = useSelector((state: RootState) => state.home)
+  
+  const {bankAccounts,bankAccountId} = useSelector((state: RootState) => state.bank)
+
   
   React.useEffect(()=>{
     getBankAccounts(dispatch)
-    dispatch(setDate(new Date().toLocaleString().slice(0,9)))
+    dispatch(setDate(new Date().toLocaleDateString())) // will trigger useEffect in TransactionList component
   },[])
 
-  React.useEffect(()=>{
-    getCategoryTransactions(dispatch,transactionType,reduxDate,range)
-    // getAllTransactions(dispatch,transactionType,reduxDate,range)
-  },[reduxDate,transactionType])
 
   return (
-      isLoading ? 
-      <View>
-        <Loader loading={isLoading}/>
-      </View> 
-      :
-      <View>
+      <ScrollView>
         {/*Ignore this error */}
         <Header title='Home' navigation={navigation}/>
         <BankSelector/>
-        <TransactionTypeSelector total={false}/>
+        <TransactionTypeSelector total={true}/>
         <HomePieChart/>
         <TransactionList/>
-      </View>
+      </ScrollView>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    marginRight: 15,
+    marginBottom:10,
+    right: 0,
+    bottom: 60
+  },
+})

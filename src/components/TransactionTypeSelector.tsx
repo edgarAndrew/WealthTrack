@@ -11,16 +11,16 @@ type HeaderProps = React.PropsWithChildren<{
 
 const transactionTypes1 = [
     {
-      value: 'TOTAL',
-      label: 'Total',
-    },
-    {
       value: 'INCOME',
       label: 'Incomes',
     },
     { value: 'EXPENSE', 
       label: 'Expenses' 
-  },
+    },
+    {
+      value: 'BOTH',
+      label: 'Total',
+    }
 ]
 const transactionTypes2 = [
     {

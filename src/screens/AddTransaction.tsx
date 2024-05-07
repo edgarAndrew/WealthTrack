@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native'
-import { TextInput,Button,Text,Snackbar} from 'react-native-paper'
+import { TextInput,Button,Text,Snackbar, Portal} from 'react-native-paper'
 import React, { useState } from 'react'
 import DropDown from "react-native-paper-dropdown";
 import { getCategoryOptions } from '../helpers/util';
@@ -8,24 +8,33 @@ import { addTransaction } from '../actions/transaction';
 import { useDispatch,useSelector } from 'react-redux';
 import { RootState } from '../store';
 import Loader from '../components/Loader';
+import { setBankAccountId } from '../reducers/bankReducer';
 
 export default function AddTransaction() {
-  const [amount,setAmount] = useState("0")
+  const [amount,setAmount] = useState("")
   const [type,setType] = useState("INCOME")
   const [category,setCategory] = useState("SALARY")
   const [budget,setBudget] = useState(false)
   const [showTypeDropDown, setShowTypeDropDown] = useState(false)
   const [showCategoryDropDown, setShowCategoryDropDown] = useState(false)
+  const [showAccountDropDown, setShowAccountDropDown] = useState(false)
 
   const [visible, setVisible] = React.useState(false);
   const [snackbarMsg,setSnackbarMsg] = React.useState('')
 
   const dispatch = useDispatch()
   const {isLoading,message,error} = useSelector((state: RootState) => state.transaction)
-  const {backAccountId} = useSelector((state: RootState) => state.home)
+  const {bankAccountId,bankAccounts} = useSelector((state: RootState) => state.bank)
+
+  const [account,setAccount] = useState(-1)
 
   const submitHandler = ()=>{
-    addTransaction(dispatch,backAccountId,parseFloat(amount),type,category,budget)
+    if(!bankAccountId || !amount || !type || !category || !budget || account===-1){
+      setSnackbarMsg("Empty fields")
+      setVisible(true)
+      return
+    }
+    addTransaction(dispatch,bankAccountId,parseFloat(amount),type,category,budget)
   }
 
   React.useEffect(()=>{
@@ -38,6 +47,10 @@ export default function AddTransaction() {
       setVisible(true)
     }
   },[message,error])
+
+  React.useEffect(() => {
+    dispatch(setBankAccountId(account));
+  }, [account]);
   
   if(isLoading)
     return (
@@ -48,7 +61,7 @@ export default function AddTransaction() {
   else
     return (
     <View>
-      <Text>AddTransaction</Text>
+      <Text>Add Transaction</Text>
       <View>
         <TextInput
           keyboardType='numeric'
@@ -88,6 +101,22 @@ export default function AddTransaction() {
           list={getCategoryOptions()}
         />
 
+        <DropDown
+          label="Account"
+          mode={"outlined"}
+          visible={showAccountDropDown}
+          showDropDown={() => setShowAccountDropDown(true)}
+          onDismiss={() => setShowAccountDropDown(false)}
+          value={account}
+          setValue={setAccount}
+          list={bankAccounts.map((item)=>{
+            return {
+              label:item.accountNumber,
+              value:item.id
+            }
+          })}
+        />
+
         {
           type === 'EXPENSE' ?
             <View>
@@ -108,19 +137,19 @@ export default function AddTransaction() {
             Done
           </Button>
         </View>
-
-        <Snackbar
-              visible={visible}
-              onDismiss={()=>setVisible(false)}
-              action={{
-                label: 'Cancel',
-                onPress: () => {
-                  // Do something
-                },
-              }}>
-              {snackbarMsg}
-      </Snackbar>
-        
+        <Portal>
+          <Snackbar
+                visible={visible}
+                onDismiss={()=>setVisible(false)}
+                action={{
+                  label: 'Cancel',
+                  onPress: () => {
+                    // Do something
+                  },
+                }}>
+                {snackbarMsg}
+        </Snackbar>
+        </Portal>
       </View>
     </View>
   )

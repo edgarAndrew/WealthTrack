@@ -13,7 +13,8 @@ export type RootStackParamList = {
   Main: undefined,
   Transactions:undefined
   Budgets:undefined,
-  Account:undefined
+  Account:undefined,
+  AddTransaction:undefined
 };
 
 function App(): React.JSX.Element {

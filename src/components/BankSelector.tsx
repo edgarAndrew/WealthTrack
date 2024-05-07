@@ -1,20 +1,22 @@
 import { StyleSheet, View,TouchableOpacity } from 'react-native'
 import { Text,Menu,Divider } from 'react-native-paper';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useDispatch,useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { getBankBalance } from '../helpers/util';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons/faAngleDown'
-import { setBankAccountId } from '../reducers/homeReducer';
+import { setBankAccountId } from '../reducers/bankReducer';
 
 export default function BankSelector() {
-    const dispatch = useDispatch()
-    const {backAccounts,backAccountId,isLoading,error} = useSelector((state: RootState) => state.home)
-    const [visible,setVisible] = useState(false)
+  const dispatch = useDispatch()
+  const {bankAccounts,bankAccountId} = useSelector((state: RootState) => state.bank)
+  const [visible,setVisible] = useState(false)
 
-    // React.useEffect
-
+  React.useEffect(()=>{
+    // console.log("hello")
+    //dispatch(setBankAccountId(bankAccounts[0].id))
+  })
 
   return (
     <View>
@@ -27,7 +29,7 @@ export default function BankSelector() {
             </TouchableOpacity>
           }>
             {
-                backAccounts.map((account)=>
+                bankAccounts.map((account)=>
                  <View key={account.id}>
                     <Menu.Item onPress={() => {
                             setVisible(false)
@@ -40,8 +42,8 @@ export default function BankSelector() {
                 )
             }
         </Menu>
-          <Text>Bank account : {backAccountId}</Text>
-          <Text>Balance : {getBankBalance(backAccounts,backAccountId)}</Text>
+          <Text>Bank account : {bankAccountId===-1 ? "No Account Selected" : bankAccountId}</Text>
+          <Text>Balance : {getBankBalance(bankAccounts,bankAccountId)}</Text>
     </View>
   )
 }

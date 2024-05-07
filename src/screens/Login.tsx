@@ -1,16 +1,14 @@
 import { StyleSheet, View,TouchableOpacity,Image,ImageBackground,KeyboardAvoidingView } from 'react-native'
 import React from 'react'
-import { TextInput, useTheme,Text,Button,Snackbar,ActivityIndicator } from 'react-native-paper'
+import { TextInput, useTheme,Text,Button,Snackbar } from 'react-native-paper'
 import {RootStackParamList} from '../App'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { trigger } from "react-native-haptic-feedback";
-import axios,{isAxiosError} from "axios";
 import { RootState } from '../store';
 import { useDispatch,useSelector } from 'react-redux'
-import '../axios'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { loginRequest,loginSuccess,loginFailure, loadUserSuccess, loadUserRequest, loadUserFailure } from '../reducers/authReducer';
 import Loader from '../components/Loader'
+import { clearError } from '../reducers/authReducer'
+import { loginUser,loadUser } from '../actions/auth'
 
 type LoginProps = NativeStackScreenProps<RootStackParamList,'Login'>
 
@@ -25,59 +23,38 @@ export default function Login({navigation}: LoginProps) {
   
   const {isAuthenticated,isLoading,error} = useSelector((state: RootState) => state.auth)
 
-  const checkJWTToken = async() =>{
-    try{
-      const token = await AsyncStorage.getItem("token")
-      if(!token)
-        throw new Error()
-      dispatch(loadUserRequest())
-      const {data} = await axios.get("/auth/load")
-      console.log(data)
-      dispatch(loadUserSuccess())
-    }catch(error){
-      dispatch(loadUserFailure())
-      setSnackbarMsg("JWT token missing/expired , please login")
-      setVisible(!visible)
-      // backend throws error if you send expired token with any request, so remove it
-      AsyncStorage.removeItem("token")
-    }
-  }
+  // const checkJWTToken = async() =>{
+  //   await loadUser(dispatch)
+  // }
 
   React.useEffect(()=>{
-    checkJWTToken()
+    // checkJWTToken()
+    loadUser(dispatch)
   },[])
 
   React.useEffect(()=>{
     if(isAuthenticated)
       navigation.navigate("Main")
   },[isAuthenticated])
+
+  React.useEffect(()=>{
+    if(snackbarMsg !== ''){
+      setVisible(true)
+    }
+    if(error !== ''){
+      setSnackbarMsg(error)
+      setVisible(true)
+    }
+  },[error,snackbarMsg])
   
 
   const handleLogin = async() =>{
     trigger('impactHeavy')
     if(!email || !password){
-      setVisible(!visible)
       setSnackbarMsg("Empty fields")
       return
     }
-    dispatch(loginRequest())
-    try{
-      const { data } = await axios.post(`/auth/login`, {email,password})
-      AsyncStorage.setItem("token",data.token)
-      dispatch(loginSuccess())
-      
-    }catch(error){
-      if(isAxiosError(error)){
-        if(error.response?.data.message){
-          dispatch(loginFailure(error.response?.data.message))
-          setSnackbarMsg(error.response?.data.message)
-          setVisible(!visible)
-        }
-        else
-          dispatch(loginFailure(error.message))
-        console.log(error.message)
-      }
-    }
+    loginUser(dispatch,email,password);
   }
 
   return (
@@ -146,7 +123,7 @@ export default function Login({navigation}: LoginProps) {
       {/* Snackbar */}
       <Snackbar
               visible={visible}
-              onDismiss={()=>setVisible(false)}
+              onDismiss={()=>{setVisible(false);setSnackbarMsg("");dispatch(clearError())}}
               action={{
                 label: 'Cancel',
                 onPress: () => {

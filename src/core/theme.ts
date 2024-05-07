@@ -7,6 +7,6 @@ export const theme = {
     // Specify custom property in nested object
     colors: {
       ...DefaultTheme.colors,
-      myOwnColor: '#BADA55',
+      myOwnColor: '#CC6CE7',
     },
   };
