@@ -23,6 +23,7 @@ export const bankSlice = createSlice({
   reducers: {
     getBankAccountsRequest: (state) => {
         state.isLoading = true,
+        state.message = ''
         state.error = ''
       },
     getBankAccountsSuccess: (state,action: PayloadAction<BankAccount[]>) => {
@@ -38,6 +39,7 @@ export const bankSlice = createSlice({
     addBankAccountRequest: (state) => {
       state.isLoading = true,
       state.error = ''
+      state.message = ''
     },
     addBankAccountSuccess: (state,action: PayloadAction<string>) => {
         state.isLoading = false,
@@ -52,6 +54,7 @@ export const bankSlice = createSlice({
     deleteBankAccountRequest: (state) => {
         state.isLoading = true,
         state.error = ''
+        state.message = ''
     },
     deleteBankAccountSuccess: (state,action: PayloadAction<string>) => {
         state.isLoading = false,

@@ -7,6 +7,7 @@ import '../axios'
 type getBankAccountsHandler = (dispatch: AppDispatch) => void;
 type getAllTransactionsHandler = (dispatch: AppDispatch,type:string,date:string,range:string,page:number,pageSize:number)=>void
 type getCategoryTransactionsHandler = (dispatch: AppDispatch,type:string,date:string,range:string)=>void
+type getBankAccountTransactionsHandler = (dispatch: AppDispatch,id:number,type:string,page:number,pageSize:number)=>void
 
 
 export const getAllTransactions: getAllTransactionsHandler = async(dispatch,type:string,date:string,range:string,page:number,pageSize:number) => {
@@ -53,6 +54,21 @@ export const getAllTransactions: getAllTransactionsHandler = async(dispatch,type
         const {data} = await axios.get(`/transactions?year=${year}&type=${type}&category=true`)
         dispatch(getTransactionsSuccess(data))
       }
+    }
+    catch(error){
+      if(isAxiosError(error)){
+        console.log(error.response?.data)
+        dispatch(getTransactionsFailure("Something went wrong"))
+      }
+    }
+  };
+
+  export const getBankAccountTransactions: getBankAccountTransactionsHandler = async(dispatch,id:number,type:string,page:number,pageSize:number) => {
+    dispatch(getPaginationRequest())
+    try{
+      
+        const {data} = await axios.get(`transactions/bank-account?id=${id}&type=${type}&page=${page}&size=${pageSize}`)
+        dispatch(getPaginationSuccess(data))
     }
     catch(error){
       if(isAxiosError(error)){

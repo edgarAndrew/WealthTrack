@@ -1,16 +1,16 @@
-import { StyleSheet, View,FlatList } from 'react-native'
-import { Button, useTheme,List,Text,DataTable } from 'react-native-paper';
+import { StyleSheet, View} from 'react-native'
+import { Button, useTheme,Text,DataTable, Snackbar, Portal } from 'react-native-paper';
 import React, { useEffect, useState,PropsWithChildren } from 'react'
 import { useSelector,useDispatch } from 'react-redux'
 import { RootState } from '../store';
 import { categoryColors } from '../helpers/util';
-import { getAllTransactions,getCategoryTransactions } from '../actions/home';
+import { getAllTransactions,getBankAccountTransactions,getCategoryTransactions } from '../actions/home';
 import Loader from './Loader';
 
 type PaginationProps = PropsWithChildren<{setPage:Function,page:number,pageSize:number,setPageSize:Function}>
 
 const Pagination = ({page,setPage,pageSize,setPageSize}:PaginationProps) => {
-  const {pagination,transactionType,isLoading} = useSelector((state: RootState) => state.home)
+  const {pagination,isLoading} = useSelector((state: RootState) => state.home)
   const [numberOfItemsPerPageList] = React.useState([3, 4, 5]);
   
   const theme = useTheme()
@@ -41,7 +41,7 @@ const Pagination = ({page,setPage,pageSize,setPageSize}:PaginationProps) => {
       ))}
 
       <DataTable.Pagination
-        page={page}
+        page={pagination.number}
         numberOfPages={pagination.totalPages}
         numberOfItemsPerPageList={numberOfItemsPerPageList}
         onItemsPerPageChange={(val)=>setPageSize(val)}
@@ -55,14 +55,34 @@ const Pagination = ({page,setPage,pageSize,setPageSize}:PaginationProps) => {
   );
 };
 
-export default function TransactionList() {
+type CircleProps = PropsWithChildren<{color:string,size:number}>
+const Circle = ({ color,size}:CircleProps) => {
+  return (
+    <View
+      style={{
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        backgroundColor: color,
+      }}
+    />
+  );
+};
+
+type TransactionListProps = PropsWithChildren<{page:number,setPage:Function}>
+
+export default function TransactionList({page,setPage}:TransactionListProps) {
     const {date:reduxDate,transactionType,range,transactions,isLoading} = useSelector((state: RootState) => state.home)
+    const {bankAccountId} = useSelector((state: RootState) => state.bank)
     const theme = useTheme()
     const dispatch = useDispatch()
 
     const [active,setActive] = useState('category')
-    const [page,setPage] = useState(0)
-    const [pageSize,setPageSize] = useState(3)
+    const [visible, setVisible] = React.useState(false);
+    const [snackbarMsg,setSnackbarMsg] = React.useState('')
+
+    // Set Page size here
+    const [pageSize,setPageSize] = useState(5)
     
     const getByCategories = () =>{
         setActive('category')
@@ -70,6 +90,17 @@ export default function TransactionList() {
 
     const getTransactions = () =>{
         setActive('all')
+    }
+
+    const getByBankAccount = () =>{
+        if(bankAccountId !== -1){
+          setActive('account')
+          setVisible(false)
+        }
+        else{
+          setSnackbarMsg("Select Bank Account")
+          setVisible(true)
+        } 
     }
 
     useEffect(()=>{
@@ -80,14 +111,17 @@ export default function TransactionList() {
         if(active === 'category'){
           getCategoryTransactions(dispatch,transactionType,reduxDate,range)
         }
+        if(active === 'account'){
+          getBankAccountTransactions(dispatch,bankAccountId,transactionType,page,pageSize);
+        }
         if(transactionType === "BOTH")
           setActive('all')
         
-    },[active,page,reduxDate,transactionType,pageSize])
+    },[active,page,reduxDate,transactionType,pageSize,bankAccountId])
 
     return (
         <View>
-            <View>
+            <View style={styles.cont}>
                 {
                   transactionType !== "BOTH" &&
                   <Button mode="text" compact={true} onPress={getByCategories}>
@@ -96,6 +130,9 @@ export default function TransactionList() {
                 }
                 <Button mode="text" onPress={getTransactions}>
                     <Text variant='titleMedium' style={{color:active === 'all'? theme.colors.primary:theme.colors.secondary}}>All transactions</Text>
+                </Button>
+                <Button mode="text" onPress={getByBankAccount}>
+                    <Text variant='titleMedium' style={{color:active === 'all'? theme.colors.primary:theme.colors.secondary}}>By Account</Text>
                 </Button>
             </View>
             {
@@ -108,13 +145,21 @@ export default function TransactionList() {
                 <View>
                 {
                     transactions.length !== 0 ? 
-                    <List.Section>
-                    {
-                        transactions.map((ele,index)=>
-                            <List.Item key={index} title={ele.categoryName + "    "+ele.percentage.toFixed(1) + "%    Rs." + ele.amount} titleStyle={{color:categoryColors[ele.categoryName]}} />
-                        )
-                    }
-                    </List.Section>
+                    <DataTable>
+                      <DataTable.Header>
+                      <DataTable.Title>Code</DataTable.Title>
+                        <DataTable.Title>Category</DataTable.Title>
+                        <DataTable.Title numeric>Amount</DataTable.Title>
+                      </DataTable.Header>
+
+                      {transactions.map((item,index) => (
+                        <DataTable.Row key={index}>
+                          <DataTable.Cell><Circle color={categoryColors[item.categoryName]} size={20}/></DataTable.Cell>
+                          <DataTable.Cell>{item.categoryName}</DataTable.Cell>
+                          <DataTable.Cell numeric>{item.amount}</DataTable.Cell>
+                        </DataTable.Row>
+                      ))}
+                    </DataTable>
                     :
                     <Text style={{color:theme.colors.primary}} variant={'titleMedium'}>No Transactions</Text>
                 }
@@ -125,9 +170,27 @@ export default function TransactionList() {
                     <Pagination page={page} setPage={setPage} pageSize={pageSize} setPageSize={setPageSize}/>
                 </View>    
             }
+            <Portal>
+              <Snackbar
+                    visible={visible}
+                    onDismiss={()=>setVisible(false)}
+                    action={{
+                      label: 'OK',
+                      onPress: () => {
+                        // Do something
+                      },
+                    }}>
+                    {snackbarMsg}
+              </Snackbar>
+            </Portal>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+  cont:{
+    display:"flex",
+    flexDirection:"row",
+    columnGap:10
+  }
 })

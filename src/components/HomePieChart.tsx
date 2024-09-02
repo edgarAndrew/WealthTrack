@@ -1,10 +1,11 @@
 import { StyleSheet, View,Dimensions } from 'react-native'
-import React from 'react'
+import React,{PropsWithChildren} from 'react'
 import { PieChart } from 'react-native-chart-kit';
 import DateSelector from './DateSelector';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { categoryColors } from '../helpers/util';
+import { Card } from 'react-native-paper';
 
 const screenWidth = Dimensions.get("window").width
 const chartConfig = {
@@ -24,7 +25,8 @@ const chartConfig = {
     }
 }
 
-export default function HomePieChart() {
+type HomePieChartProps = PropsWithChildren<{setPage:Function}>
+export default function HomePieChart({setPage}:HomePieChartProps) {
   const {transactions} = useSelector((state: RootState) => state.home)
 
   const data = transactions.map((ele)=>{
@@ -39,26 +41,31 @@ export default function HomePieChart() {
 
     return (
     <View>
-      <DateSelector/>
-      <PieChart
-        data={data}
-        width={screenWidth}
-        height={220}
-        chartConfig={chartConfig}
-        accessor={"amount"}
-        backgroundColor={"transparent"}
-        paddingLeft={"65"}
-        center={[20, 10]}
-        absolute
-        hasLegend={false}
-       />
+      <DateSelector setPage={setPage}/>
+      <Card style={styles.container}>
+        <Card.Content >
+          <PieChart
+          data={data}
+          width={screenWidth}
+          height={210}
+          chartConfig={chartConfig}
+          accessor={"amount"}
+          backgroundColor={"transparent"}
+          // paddingLeft={"2"}
+          paddingLeft='-25'
+          center={[5, 10]}
+          // absolute
+          hasLegend={true}
+        />
+        </Card.Content>
+      </Card>
+      
     </View>
   )
 }
 
 const styles = StyleSheet.create({
     container:{
-        flex:1,
-        height:250
+        marginVertical:10
     },
 })

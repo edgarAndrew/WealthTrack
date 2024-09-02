@@ -1,12 +1,13 @@
 import { StyleSheet, View } from 'react-native'
-import { SegmentedButtons, Text } from 'react-native-paper'
+import { SegmentedButtons, Text} from 'react-native-paper'
 import React, { useState } from 'react'
-import { setTransactionType } from '../reducers/homeReducer'
+import {setTransactionType } from '../reducers/homeReducer'
 import { useDispatch,useSelector } from 'react-redux'
 import { RootState } from '../store';
 
 type HeaderProps = React.PropsWithChildren<{
-    total:boolean
+    total:boolean,
+    setPage:Function
 }>
 
 const transactionTypes1 = [
@@ -32,12 +33,13 @@ const transactionTypes2 = [
   },
 ]
 
-export default function TransactionTypeSelector({total}:HeaderProps) {
+export default function TransactionTypeSelector({total,setPage}:HeaderProps) {
   const dispatch = useDispatch()
   const {transactionType} = useSelector((state: RootState) => state.home)
   const [value,setValue] = useState(transactionType)
 
   React.useEffect(()=>{
+    setPage(0)
     dispatch(setTransactionType(value))
   },[value])
     

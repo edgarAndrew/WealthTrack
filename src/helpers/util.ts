@@ -2,6 +2,10 @@ export const getBankBalance = (backAccounts:BankAccount[],id:number) =>{
     const account = backAccounts.find(account => account.id === id);
     return account ? account.balance : null
 }
+export const getBankAccountNumber = (backAccounts:BankAccount[],id:number) =>{
+    const account = backAccounts.find(account => account.id === id);
+    return account ? account.accountNumber.slice(-4).padStart(account.accountNumber.length, "*") : null
+}
 
 type CategoryColors = {
     [category: string]: string;

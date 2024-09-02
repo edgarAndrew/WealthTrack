@@ -3,6 +3,7 @@ import { Dialog, Paragraph, Portal, Button as PaperButton } from 'react-native-p
 import { useDispatch } from 'react-redux';
 import { deleteBudget,getBudgets } from '../actions/budget';
 import { deleteGoal,getGoals } from '../actions/goals';
+import { deleteBankAccount, getBankAccounts } from '../actions/bank';
 
 type DeleteModalProps = PropsWithChildren<{hideModal:Function,visible:boolean,type:string,id:number}>
 
@@ -16,6 +17,10 @@ const DeleteModal = ({hideModal,visible,type,id}:DeleteModalProps) => {
         }else if(type === 'budget'){
             await deleteBudget(dispatch,id)
             getBudgets(dispatch)
+        }
+        else if(type === 'account'){
+            await deleteBankAccount(dispatch,id)
+            getBankAccounts(dispatch)
         }
         hideModal()
     };

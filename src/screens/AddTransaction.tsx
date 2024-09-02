@@ -1,5 +1,5 @@
-import { StyleSheet, View } from 'react-native'
-import { TextInput,Button,Text,Snackbar, Portal} from 'react-native-paper'
+import { StyleSheet, View,ImageBackground } from 'react-native'
+import { TextInput,Button,Text,Snackbar, Portal,useTheme} from 'react-native-paper'
 import React, { useState } from 'react'
 import DropDown from "react-native-paper-dropdown";
 import { getCategoryOptions } from '../helpers/util';
@@ -18,6 +18,7 @@ export default function AddTransaction() {
   const [showTypeDropDown, setShowTypeDropDown] = useState(false)
   const [showCategoryDropDown, setShowCategoryDropDown] = useState(false)
   const [showAccountDropDown, setShowAccountDropDown] = useState(false)
+  const theme = useTheme()
 
   const [visible, setVisible] = React.useState(false);
   const [snackbarMsg,setSnackbarMsg] = React.useState('')
@@ -29,7 +30,7 @@ export default function AddTransaction() {
   const [account,setAccount] = useState(-1)
 
   const submitHandler = ()=>{
-    if(!bankAccountId || !amount || !type || !category || !budget || account===-1){
+    if(!bankAccountId || !amount || !type || !category || account===-1){
       setSnackbarMsg("Empty fields")
       setVisible(true)
       return
@@ -51,18 +52,21 @@ export default function AddTransaction() {
   React.useEffect(() => {
     dispatch(setBankAccountId(account));
   }, [account]);
-  
-  if(isLoading)
-    return (
-      <View>
-          <Loader loading={isLoading}/>
-      </View>
-    )
-  else
-    return (
+
+  return (
+    <ImageBackground
+      source={require('../assets/background_dot.png')}
+      resizeMode="repeat"
+      style={[styles.background,{backgroundColor: theme.colors.surface,}]}
+    >
+    {
+      isLoading ? <View>
+      <Loader loading={isLoading}/>
+  </View> :
+    <View style={styles.container}>
+    <Text variant='displaySmall' style={[styles.header,{color:theme.colors.primary}]}>Add Transaction</Text>
     <View>
-      <Text>Add Transaction</Text>
-      <View>
+      <View style={styles.inputCont}>
         <TextInput
           keyboardType='numeric'
           label="Amount"
@@ -70,7 +74,9 @@ export default function AddTransaction() {
           value={amount}
           onChangeText={text => setAmount(text)}
         />
-
+      </View>
+      
+      <View style={styles.inputCont}>
         <DropDown
             label="Type"
             mode={"outlined"}
@@ -89,7 +95,10 @@ export default function AddTransaction() {
               }
             ]}
         />
+      </View>
 
+      
+      <View style={styles.inputCont}>
         <DropDown
           label="Category"
           mode={"outlined"}
@@ -100,7 +109,9 @@ export default function AddTransaction() {
           setValue={setCategory}
           list={getCategoryOptions()}
         />
-
+      </View>
+      
+      <View style={styles.inputCont}>
         <DropDown
           label="Account"
           mode={"outlined"}
@@ -116,43 +127,90 @@ export default function AddTransaction() {
             }
           })}
         />
-
-        {
-          type === 'EXPENSE' ?
-            <View>
-              <BouncyCheckbox
-                isChecked={budget}
-                size={25}
-                fillColor="red"
-                disableText={true}
-                onPress={() => {setBudget(!budget)}}
-              />
-              <Text variant="labelLarge">Include in month's budget</Text>
-            </View>
-            :null
-        }
-        
-        <View>
-          <Button mode="contained" onPress={submitHandler}>
-            Done
-          </Button>
-        </View>
-        <Portal>
-          <Snackbar
-                visible={visible}
-                onDismiss={()=>setVisible(false)}
-                action={{
-                  label: 'Cancel',
-                  onPress: () => {
-                    // Do something
-                  },
-                }}>
-                {snackbarMsg}
-        </Snackbar>
-        </Portal>
       </View>
+      
+
+      {
+        type === 'EXPENSE' ?
+          <View style={styles.inputCont}>
+            <BouncyCheckbox
+              isChecked={budget}
+              size={25}
+              fillColor="red"
+              disableText={true}
+              onPress={() => {setBudget(!budget)}}
+            />
+            <Text variant="labelLarge">Include in month's budget</Text>
+          </View>
+          :null
+      }
+      
+      <View>
+        <Button style={styles.button} labelStyle={styles.btntext} mode="contained" onPress={submitHandler}>
+          Done
+        </Button>
+      </View>
+
+      <Portal>
+        <Snackbar
+              visible={visible}
+              onDismiss={()=>setVisible(false)}
+              action={{
+                label: 'Cancel',
+                onPress: () => {
+                  // Do something
+                },
+              }}>
+              {snackbarMsg}
+      </Snackbar>
+      </Portal>
     </View>
+  </View>
+    }
+    </ImageBackground>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+  },
+  container: {
+    flex: 1,
+    padding: 20,
+    //width: '100%',
+    maxWidth: 340,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  header: {
+    fontWeight: 'bold',
+    paddingVertical: 12,
+  },
+  button: {
+    width: '100%',
+    marginVertical: 25,
+    paddingVertical: 2,
+  },
+  btntext: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    lineHeight: 26,
+  },
+  row: {
+    flexDirection: 'row',
+    marginTop: 8,
+  },
+
+  image: {
+    width: 110,
+    height: 110,
+    marginBottom: 8,
+  },
+  inputCont: {
+    width: 300,
+    marginVertical: 20,
+  }
+})
