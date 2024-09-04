@@ -74,7 +74,7 @@ export default function Account({navigation}:NavigationProps) {
           </Snackbar>
         </Portal>
 
-        <Button icon="plus" mode="contained" onPress={showAddModal}>
+        <Button icon="plus" mode="contained" onPress={showAddModal} style={{marginVertical:10,marginHorizontal:10}}>
           <Text variant={'titleMedium'} style={{color:'#fff'}}>Add Bank Account</Text>
         </Button>
         <Portal>

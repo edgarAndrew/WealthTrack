@@ -132,7 +132,7 @@ export default function TransactionList({page,setPage}:TransactionListProps) {
                     <Text variant='titleMedium' style={{color:active === 'all'? theme.colors.primary:theme.colors.secondary}}>All transactions</Text>
                 </Button>
                 <Button mode="text" onPress={getByBankAccount}>
-                    <Text variant='titleMedium' style={{color:active === 'all'? theme.colors.primary:theme.colors.secondary}}>By Account</Text>
+                    <Text variant='titleMedium' style={{color:active === 'account'? theme.colors.primary:theme.colors.secondary}}>By Account</Text>
                 </Button>
             </View>
             {

@@ -66,7 +66,7 @@ export default function Goals({navigation}:NavigationProps) {
             </Snackbar>
           </Portal>
         
-        <Button icon="plus" mode="contained" onPress={showModal}>
+        <Button icon="plus" mode="contained" onPress={showModal} style={{marginVertical:10,marginHorizontal:10}}>
           <Text variant={'titleMedium'} style={{color:'#fff'}}>Add Goal</Text>
         </Button>
         <Portal>
